@@ -7,13 +7,13 @@ import com.costyuk.leprechaun.HappyLeprechaun;
 
 public class HtmlLauncher extends GwtApplication {
 
-        @Override
-        public GwtApplicationConfiguration getConfig () {
-                return new GwtApplicationConfiguration(480, 320);
-        }
+	@Override
+	public ApplicationListener createApplicationListener() {
+		return new HappyLeprechaun();
+	}
 
-        @Override
-        public ApplicationListener createApplicationListener () {
-                return new HappyLeprechaun();
-        }
+	@Override
+	public GwtApplicationConfiguration getConfig() {
+		return new GwtApplicationConfiguration(800, 480);
+	}
 }
