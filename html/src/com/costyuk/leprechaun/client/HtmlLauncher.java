@@ -9,7 +9,7 @@ public class HtmlLauncher extends GwtApplication {
 
 	@Override
 	public ApplicationListener createApplicationListener() {
-		return new HappyLeprechaun();
+		return new HappyLeprechaun(480, 800);
 	}
 
 	@Override

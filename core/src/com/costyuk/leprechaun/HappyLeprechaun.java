@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class HappyLeprechaun extends ApplicationAdapter {
+	private final int SCREEN_HEIGHT;
+	private final int SCREEN_WIDTH;
 	private Texture bucketImage;
 	private Texture leprechaunImage;
 
@@ -27,42 +29,38 @@ public class HappyLeprechaun extends ApplicationAdapter {
 	private Array<FallingItem> fallingItems;
 	private long lastDropTime;
 
+	public HappyLeprechaun(int height, int width) {
+		SCREEN_HEIGHT = height;
+		SCREEN_WIDTH = width;
+	}
 	@Override
 	public void create() {
-		// load the images for the droplet and the bucket, 64x64 pixels each
-		bucketImage = new Texture(Gdx.files.internal("bucket.png"));
+
 		leprechaunImage = new Texture(Gdx.files.internal("leprechaun.png"));
-
-		// load the drop sound effect and the rain background "music"
-
+		bucketImage = new Texture(Gdx.files.internal("bucket.png"));
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
-		// start the playback of the background music immediately
 		rainMusic.setLooping(true);
 		rainMusic.play();
 
-		// create the camera and the SpriteBatch
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, SCREEN_WIDTH, SCREEN_HEIGHT);
 		batch = new SpriteBatch();
 
-		// create a Rectangle to logically represent the bucket
 		bucket = new Rectangle();
-		bucket.x = 800 / 2 - 64 / 2; // center the bucket horizontally
-		bucket.y = 20; // bottom left corner of the bucket is 20 pixels above
-						// the bottom screen edge
+		bucket.x = SCREEN_WIDTH / 2 - 64 / 2;
+		bucket.y = 20;
 		bucket.width = 64;
 		bucket.height = 64;
 
-		// create the raindrops array and spawn the first raindrop
 		fallingItems = new Array<FallingItem>();
 		spawnFallingItem();
 	}
 
 	private void spawnFallingItem() {
 		Rectangle rectangle = new Rectangle();
-		rectangle.x = MathUtils.random(0, 800 - 64);
-		rectangle.y = 480;
+		rectangle.x = MathUtils.random(0, SCREEN_WIDTH - 64);
+		rectangle.y = SCREEN_HEIGHT;
 		rectangle.width = 64;
 		rectangle.height = 64;
 		FallingItem item = getFailingItemRandomly();
@@ -88,18 +86,15 @@ public class HappyLeprechaun extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		// tell the camera to update its matrices.
 		camera.update();
 
 		// tell the SpriteBatch to render in the
 		// coordinate system specified by the camera.
 		batch.setProjectionMatrix(camera.combined);
 
-		// begin a new batch and draw the bucket and
-		// all drops
 		batch.begin();
+		batch.draw(leprechaunImage, SCREEN_WIDTH - 221, 0);
 		batch.draw(bucketImage, bucket.x, bucket.y);
-		batch.draw(leprechaunImage, 800 - 221, 0);
 		for (FallingItem item : fallingItems) {
 			batch.draw(item.getTexture(), item.getRectangle().x, item.getRectangle().y);
 		}
@@ -120,16 +115,12 @@ public class HappyLeprechaun extends ApplicationAdapter {
 		// make sure the bucket stays within the screen bounds
 		if (bucket.x < 0)
 			bucket.x = 0;
-		if (bucket.x > 800 - 64)
-			bucket.x = 800 - 64;
+		if (bucket.x > SCREEN_WIDTH - 64)
+			bucket.x = SCREEN_WIDTH - 64;
 
-		// check if we need to create a new raindrop
-		if (TimeUtils.nanoTime() - lastDropTime > 2000000000)
+		if (TimeUtils.nanoTime() - lastDropTime > 1000000000)
 			spawnFallingItem();
 
-		// move the raindrops, remove any that are beneath the bottom edge of
-		// the screen or that hit the bucket. In the later case we play back
-		// a sound effect as well.
 		Iterator<FallingItem> iter = fallingItems.iterator();
 		while (iter.hasNext()) {
 			FallingItem item = iter.next();

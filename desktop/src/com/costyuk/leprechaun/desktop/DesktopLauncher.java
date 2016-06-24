@@ -10,6 +10,6 @@ public class DesktopLauncher {
 	      config.title = "Happy Leprechaun";
 	      config.width = 800;
 	      config.height = 480;
-		new LwjglApplication(new HappyLeprechaun(), config);
+		new LwjglApplication(new HappyLeprechaun(480, 800), config);
 	}
 }
